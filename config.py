@@ -36,7 +36,7 @@ class Config:
     timezone: str = "UTC"
 
     # ── Storage ───────────────────────────────────────────────────────────────
-    db_path: str = "devpulse.db"
+    db_path: str = "tbxpost.db"
 
     # ── News ──────────────────────────────────────────────────────────────────
     rss_feeds: list = field(default_factory=lambda: [
@@ -65,7 +65,7 @@ def load() -> Config:
         post_hour=int(os.environ.get("POST_HOUR", "9")),
         post_minute=int(os.environ.get("POST_MINUTE", "0")),
         timezone=os.environ.get("TIMEZONE", "UTC"),
-        db_path=os.environ.get("DB_PATH", "devpulse.db"),
+        db_path=os.environ.get("DB_PATH", "tbxpost.db"),
         rss_feeds=os.environ.get(
             "RSS_FEEDS",
             "https://hnrss.org/frontpage,https://dev.to/feed",

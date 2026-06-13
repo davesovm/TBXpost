@@ -7,26 +7,25 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: python main.py
     envVars:
+      # ── Required secrets (set manually in Render dashboard) ──────────────
       - key: TELEGRAM_BOT_TOKEN
-        sync: false          # set manually in Render dashboard
+        sync: false
       - key: TELEGRAM_CHANNEL
         sync: false
       - key: TELEGRAM_ADMIN_ID
         sync: false
       - key: GROQ_API_KEY
         sync: false
-      - key: GROQ_MODEL
-        value: llama-3.1-8b-instant
+
+      # ── Optional secrets ──────────────────────────────────────────────────
       - key: GEMINI_API_KEY
         sync: false
+
+      # ── Non-secret config (safe to commit) ───────────────────────────────
+      - key: GROQ_MODEL
+        value: llama-3.1-8b-instant
       - key: GEMINI_MODEL
         value: gemini-1.5-flash
-      - key: POST_DAYS
-        value: mon,thu
-      - key: POST_HOUR
-        value: "9"
-      - key: POST_MINUTE
-        value: "0"
       - key: TIMEZONE
         value: UTC
       - key: RSS_FEEDS
