@@ -1,0 +1,37 @@
+services:
+  - type: worker
+    name: tbxpost
+    runtime: python
+    repo: https://github.com/davesovm/TBXpost
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false          # set manually in Render dashboard
+      - key: TELEGRAM_CHANNEL
+        sync: false
+      - key: TELEGRAM_ADMIN_ID
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: llama-3.1-8b-instant
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-1.5-flash
+      - key: POST_DAYS
+        value: mon,thu
+      - key: POST_HOUR
+        value: "9"
+      - key: POST_MINUTE
+        value: "0"
+      - key: TIMEZONE
+        value: UTC
+      - key: RSS_FEEDS
+        value: "https://hnrss.org/frontpage,https://dev.to/feed"
+      - key: NEWS_MIN_SCORE
+        value: "7"
+      - key: DB_PATH
+        value: tbxpost.db
