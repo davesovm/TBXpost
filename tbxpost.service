@@ -7,23 +7,14 @@ Wants=network-online.target
 [Service]
 Type=simple
 User=sovm
-
-# ── Update this path if your project is in a different location ───────────────
-WorkingDirectory=/home/sovm/Desktop/sovm's/TBXpost
-ExecStart=/home/sovm/Desktop/sovm's/TBXpost/venv/bin/python bot/run_bot.py
-# ─────────────────────────────────────────────────────────────────────────────
-
-# Restart on failure with 15 second delay
+WorkingDirectory=/home/sovm/Desktop/sovm%27s/TBXpost
+ExecStart=/home/sovm/Desktop/sovm%27s/TBXpost/venv/bin/python /home/sovm/Desktop/sovm%27s/TBXpost/bot/run_bot.py
 Restart=on-failure
 RestartSec=15s
-
-# Log to systemd journal
 StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=tbxpost
-
-# Load secrets from .env (keeps tokens off the command line)
-EnvironmentFile=/home/sovm/Desktop/sovm's/TBXpost/.env
+EnvironmentFile=/home/sovm/Desktop/sovm%27s/TBXpost/.env
 
 [Install]
 WantedBy=default.target

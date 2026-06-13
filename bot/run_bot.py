@@ -55,8 +55,10 @@ def main() -> None:
     db.init(cfg.db_path)
     log.info("Database ready: %s", cfg.db_path)
 
-    # Build the Telegram application
-    app = Application.builder().token(cfg.telegram_bot_token).build()
+    # Build the Telegram application with extended timeouts for slow networks
+    from telegram.request import HTTPXRequest
+    request = HTTPXRequest(connect_timeout=30, read_timeout=30, write_timeout=30)
+    app = Application.builder().token(cfg.telegram_bot_token).request(request).build()
     app.bot_data["cfg"] = cfg
 
     # Register all command handlers
