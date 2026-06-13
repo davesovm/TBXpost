@@ -1,0 +1,55 @@
+name: TBXpost Broadcast
+
+# Runs twice a day: 06:00 UTC (morning) and 18:00 UTC (evening)
+# Also triggerable manually via workflow_dispatch
+
+on:
+  schedule:
+    - cron: "0 6  * * *"   # Every day 06:00 UTC
+    - cron: "0 18 * * *"   # Every day 18:00 UTC
+  workflow_dispatch:        # manual trigger
+
+permissions:
+  contents: write          # needed to commit broadcast_history.md
+
+jobs:
+  broadcast:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests==2.32.3 feedparser==6.0.11
+
+      - name: Run broadcast
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL:   ${{ secrets.TELEGRAM_CHANNEL }}
+          GROQ_API_KEY:       ${{ secrets.GROQ_API_KEY }}
+          GROQ_MODEL:         ${{ vars.GROQ_MODEL || 'llama-3.1-8b-instant' }}
+          GEMINI_API_KEY:     ${{ secrets.GEMINI_API_KEY }}
+          NEWS_MIN_SCORE:     ${{ vars.NEWS_MIN_SCORE || '7' }}
+          RSS_FEEDS:          ${{ vars.RSS_FEEDS || 'https://hnrss.org/frontpage,https://dev.to/feed' }}
+        run: python scheduler/run_jobs.py
+
+      - name: Commit broadcast history
+        run: |
+          git config user.name  "tbxpost-bot[bot]"
+          git config user.email "tbxpost-bot@users.noreply.github.com"
+          git add broadcast_history.md
+          git diff --cached --quiet \
+            && echo "No history changes to commit." \
+            || git commit -m "chore: broadcast log [skip ci]"
+
+      - name: Push history
+        run: git push
