@@ -1,32 +1,33 @@
 """
 bot/run_bot.py — Local daemon entry point.
 
-Runs on your machine as a systemd service.
+Runs on your Linux machine as a systemd service (see tbxpost.service).
 Handles all interactive commands: /log /status /generate /post_now /news
-All data stays local in SQLite.
+All data stays local in SQLite — nothing leaves your machine until
+you explicitly run /post_now.
 
-Run directly:
+Run manually:
+    cd ~/Desktop/sovm's/TBXpost
+    source venv/bin/activate
     python bot/run_bot.py
 
-Or via systemd (see tbxpost.service).
+Or as a background service (see tbxpost.service).
 """
 
 import logging
-import os
 import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
 from telegram.ext import Application
 
-# Add project root to path
+# Add project root to path so all imports work
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from bot import handlers
 from storage import db
 import config
 
-# ── Logging ───────────────────────────────────────────────────────────────────
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
@@ -44,24 +45,25 @@ def main() -> None:
     cfg = config.load()
 
     if not cfg.telegram_bot_token:
-        log.error("TELEGRAM_BOT_TOKEN is required.")
+        log.error("TELEGRAM_BOT_TOKEN is required. Fill it in .env")
         sys.exit(1)
     if not cfg.telegram_admin_id:
-        log.error("TELEGRAM_ADMIN_ID is required. Get yours from @userinfobot.")
+        log.error("TELEGRAM_ADMIN_ID is required. Get yours from @userinfobot")
         sys.exit(1)
 
-    # Initialise local SQLite database
+    # Initialise local SQLite database (auto-creates schema)
     db.init(cfg.db_path)
     log.info("Database ready: %s", cfg.db_path)
 
-    # Build and configure the Telegram application
+    # Build the Telegram application
     app = Application.builder().token(cfg.telegram_bot_token).build()
     app.bot_data["cfg"] = cfg
 
     # Register all command handlers
     handlers.register(app)
 
-    log.info("TBXpost local bot running. Send /status to test.")
+    log.info("TBXpost local bot running.")
+    log.info("Send /status to your bot on Telegram to confirm it works.")
     app.run_polling(drop_pending_updates=True)
 
 

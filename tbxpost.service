@@ -1,23 +1,28 @@
 [Unit]
 Description=TBXpost — local Telegram bot daemon
+Documentation=https://github.com/davesovm/TBXpost
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
-# ── Update these two paths to match your setup ───────────────────────────────
 User=sovm
+
+# ── Update this path if your project is in a different location ───────────────
 WorkingDirectory=/home/sovm/Desktop/sovm's/TBXpost
 ExecStart=/home/sovm/Desktop/sovm's/TBXpost/venv/bin/python bot/run_bot.py
 # ─────────────────────────────────────────────────────────────────────────────
 
+# Restart on failure with 15 second delay
 Restart=on-failure
 RestartSec=15s
+
+# Log to systemd journal
 StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=tbxpost
 
-# Environment file — keeps secrets off the command line
+# Load secrets from .env (keeps tokens off the command line)
 EnvironmentFile=/home/sovm/Desktop/sovm's/TBXpost/.env
 
 [Install]
