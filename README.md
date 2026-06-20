@@ -1,3 +1,7 @@
+
+![TBXpost Interface](https://github.com/user-attachments/assets/527177b7-72f1-412e-b33e-29162196a5b6)
+
+
 # TBXpost
 
 ![Python](https://img.shields.io/badge/python-3.11-blue.svg)
@@ -5,6 +9,7 @@
 ![Last Commit](https://img.shields.io/github/last-commit/davesovm/TBXpost)
 
 A personal content OS for developers — logs dev work, curates tech news, generates posts using AI, and auto-posts to Telegram twice a day. Zero cloud cost. Zero server. Just GitHub Actions + your local machine.
+
 
 ---
 
