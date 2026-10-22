@@ -4,12 +4,11 @@ core/engine.py — Shared AI generation logic.
 Used by both bot/ (interactive) and scheduler/ (broadcast).
 Primary: Groq. Fallback: Gemini. Stateless — no database dependency.
 """
-
+# this  is  a repo of telegram posts generated from dev logs and news articles, using AI to summarize and provide insights.
 import logging
 import re
 import time
 from typing import Optional
-
 import requests
 
 log = logging.getLogger(__name__)
