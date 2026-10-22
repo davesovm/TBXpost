@@ -7,6 +7,7 @@
 ![Python](https://img.shields.io/badge/python-3.11-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Last Commit](https://img.shields.io/github/last-commit/davesovm/TBXpost)
+![Broadcast](https://github.com/davesovm/TBXpost/actions/workflows/broadcast.yml/badge.svg)
 
 A personal content OS for developers — logs dev work, curates tech news, generates posts using AI, and auto-posts to Telegram twice a day. Zero cloud cost. Zero server. Just GitHub Actions + your local machine.
 
@@ -22,6 +23,29 @@ Wakes up at 06:00 and 18:00 UTC every day. Fetches the best developer news from 
 
 **Interactive engine** (your local machine — instant, private)
 Runs as a background `systemd` daemon. Responds to `/log`, `/status`, `/generate`, `/post_now`, `/news` commands instantly. Your dev logs never leave your machine until you authorize a post.
+
+---
+
+## How it works
+
+### AI generation pipeline
+
+Both engines share the same generation logic in `core/engine.py`:
+
+1. **Input** — either recent dev logs (for `/generate`) or the top RSS article (for `/news` and broadcast)
+2. **Prompt** — one of three tones (`builder`, `humorous`, `technical`) shapes the voice
+3. **Groq** (primary) — calls Llama 3.1 8B Instant for fast, free generation
+4. **Gemini** (fallback) — if Groq fails after 3 retries, Gemini 1.5 Flash takes over
+5. **Score filtering** — the AI returns a 0–10 quality score. Articles below `NEWS_MIN_SCORE` (default 7) are skipped
+6. **Post** — the generated content is sent to your Telegram channel with retry logic
+
+### RSS scoring
+
+`engine/fetcher.py` scores articles before AI curation using keyword heuristics:
+
+- Signal keywords (open source, release, AI, rust, kubernetes, etc.) boost the score
+- Noise keywords (sponsored, giveaway, promoted) penalize it
+- The highest-scoring article across all feeds is selected for curation
 
 ---
 
@@ -196,13 +220,16 @@ TBXpost/
 │   └── run_jobs.py         # GitHub Actions broadcast script
 ├── storage/
 │   └── db.py               # all SQLite operations (local only)
+├── poster/                 # drop-in platform adapters (see below)
 ├── .github/workflows/
 │   └── broadcast.yml       # 2x/day cron workflow
 ├── config.py               # ENV loading
 ├── tbxpost.service         # systemd unit file
 ├── broadcast_history.md    # auto-updated by GitHub Actions
-├── requirements.txt        # 4 packages
+├── requirements.txt        # python-telegram-bot, feedparser, requests, python-dotenv
 ├── .env.example
+├── .gitignore
+├── LICENSE
 ├── MIGRATION.md
 └── CONTRIBUTING.md
 ```
