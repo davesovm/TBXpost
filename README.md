@@ -11,7 +11,7 @@
 
 A personal content OS for developers — logs dev work, curates tech news, generates posts using AI, and auto-posts to Telegram twice a day. Zero cloud cost. Zero server. Just GitHub Actions + your local machine.
 
-mine
+mine  this project  is mine  and  its just  a project
 ---
 
 ## What it does
